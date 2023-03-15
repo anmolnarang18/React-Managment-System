@@ -31,18 +31,20 @@ export default function Home({navigation}) {
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Text style={styles.headerText}>Hi {userInfo?.name}</Text>
-        {userInfo?.isAdmin ? (
+        {/* {userInfo?.isAdmin ? (
           <Text onPress={createTask} style={styles.createText}>
             Create
           </Text>
-        ) : null}
+        ) : null} */}
       </View>
       <ScrollView
         style={styles.box}
         contentContainerStyle={{
           alignItems: 'center',
           justifyContent: 'center',
-        }}></ScrollView>
+        }}>
+        <Text>Home Screen</Text>
+      </ScrollView>
       <Text onPress={logout} style={styles.logoutText}>
         Log out
       </Text>

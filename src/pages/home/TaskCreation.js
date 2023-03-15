@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {StyleSheet, Text, TextInput, View} from 'react-native';
 import DatePicker from 'react-native-date-picker';
+import Icon from 'react-native-vector-icons/AntDesign';
 
 import {COLORS} from '../../shared/Styles';
 export default function TaskCreation({navigation}) {
@@ -23,16 +24,19 @@ export default function TaskCreation({navigation}) {
   const [openEDate, setOpenEDate] = useState(false);
   return (
     <View style={styles.container}>
+      <Icon
+        onPress={() => navigation.goBack()}
+        name="arrowleft"
+        size={30}
+        color="#900"
+      />
       <Text style={styles.headerText}>Create New Task</Text>
       <View style={styles.box}>
         <View style={styles.inputContainer}>
-          <Text style={styles.inputText}>Email Address</Text>
+          <Text style={styles.inputText}>Name</Text>
           <TextInput
             value={name.val}
-            placeholder="Please Enter Email address"
-            textContentType="emailAddress"
-            autoCapitalize="none"
-            autoComplete="email"
+            placeholder="Please enter task name"
             onChangeText={val =>
               setName({
                 isValid: true,
@@ -46,13 +50,10 @@ export default function TaskCreation({navigation}) {
         </View>
 
         <View style={styles.inputContainer}>
-          <Text style={styles.inputText}>Email Address</Text>
+          <Text style={styles.inputText}>Description</Text>
           <TextInput
             value={desc.val}
-            placeholder="Please Enter Email address"
-            textContentType="emailAddress"
-            autoCapitalize="none"
-            autoComplete="email"
+            placeholder="Please enter task description"
             multiline
             onChangeText={val =>
               setDesc({
