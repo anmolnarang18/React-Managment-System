@@ -47,7 +47,7 @@ export const handleValidation = (val, type, name = 'name') => {
       }
 
     case 'NUMBER':
-      if (!val) {
+      if (!val || val == 0) {
         return {
           val: val,
           isValid: false,

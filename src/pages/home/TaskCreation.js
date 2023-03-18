@@ -114,7 +114,11 @@ export default function TaskCreation({navigation, route}) {
       'per hour wage',
     );
 
-    if (!nameValidation.isValid || !descValidation.isValid || !wageValidation) {
+    if (
+      !nameValidation.isValid ||
+      !descValidation.isValid ||
+      !wageValidation.isValid
+    ) {
       setDesc(descValidation);
       setName(nameValidation);
       setWage(wageValidation);
@@ -331,7 +335,7 @@ export default function TaskCreation({navigation, route}) {
         </View>
 
         <TouchableOpacity style={styles.btn} onPress={handleSubmit}>
-          <Text style={styles.btnText}>Create Project</Text>
+          <Text style={styles.btnText}>Create Task</Text>
         </TouchableOpacity>
       </View>
     </View>
