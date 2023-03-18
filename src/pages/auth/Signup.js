@@ -11,61 +11,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {COLORS} from '../../shared/Styles';
 import {
-  EMAIL_VALIDATION,
   USER_ADMIN_KEY,
+  USER_LOGGEDIN_KEY,
   USER_MEMBER_KEY,
 } from '../../shared/Constants';
-
-const handleValidation = (val, type) => {
-  switch (type) {
-    case 'EMAIL':
-      if (!val || !EMAIL_VALIDATION.test(val)) {
-        return {
-          val: val,
-          isValid: false,
-          errMsg: 'Please enter valid email address',
-        };
-      } else {
-        return {
-          val: val,
-          isValid: true,
-          errMsg: '',
-        };
-      }
-    case 'PASSWORD':
-      if (!val || val.length < 6) {
-        return {
-          val: val,
-          isValid: false,
-          errMsg: 'Password must be atleast 6 characters long.',
-        };
-      } else {
-        return {
-          val: val,
-          isValid: true,
-          errMsg: '',
-        };
-      }
-
-    case 'NAME':
-      if (!val || val.length < 3) {
-        return {
-          val: val,
-          isValid: false,
-          errMsg: 'Please enter valid name',
-        };
-      } else {
-        return {
-          val: val,
-          isValid: true,
-          errMsg: '',
-        };
-      }
-
-    default:
-      break;
-  }
-};
+import {handleValidation} from '../../utils/Validations';
 
 export default function Signup({navigation}) {
   const [email, setEmail] = useState({
@@ -91,7 +41,7 @@ export default function Signup({navigation}) {
   const handleSubmit = async () => {
     const emailValidation = handleValidation(email.val, 'EMAIL');
     const passValidation = handleValidation(password.val, 'PASSWORD');
-    const nameValidation = handleValidation(name.val, 'NAME');
+    const nameValidation = handleValidation(name.val, 'STRING', 'name');
 
     if (
       !emailValidation.isValid ||
@@ -143,11 +93,22 @@ export default function Signup({navigation}) {
             password: password.val,
             name: name.val,
             isAdmin,
+            tasks: [],
           },
           ...expectedData,
         ]),
       );
     }
+
+    await AsyncStorage.setItem(
+      USER_LOGGEDIN_KEY,
+      JSON.stringify({
+        email: email.val,
+        password: password.val,
+        name: name.val,
+        isAdmin,
+      }),
+    );
 
     //Navigate from here
     navigation.replace('HOME');
@@ -182,13 +143,13 @@ export default function Signup({navigation}) {
         </View>
 
         <View style={styles.inputContainer}>
-          <Text style={styles.inputText}>Email Address</Text>
+          <Text style={styles.inputText}>Email</Text>
           <TextInput
             value={email.val}
             textContentType="emailAddress"
             autoComplete="email"
             autoCapitalize="none"
-            placeholder="Please Enter Email address"
+            placeholder="Please Enter Your Email address"
             onChangeText={val =>
               setEmail({
                 isValid: true,
@@ -224,23 +185,13 @@ export default function Signup({navigation}) {
           )}
         </View>
 
-        <View style={styles.switchContainer}>
-          <Text
-            style={[
-              {color: isAdmin ? 'grey' : COLORS.primary},
-              styles.inputText,
-            ]}>
-            Member
-          </Text>
-          <Switch
-            trackColor={{false: '#767577', true: COLORS.primary}}
-            thumbColor={isAdmin ? '#fff' : '#f4f3f4'}
-            ios_backgroundColor="#3e3e3e"
-            onValueChange={toggleSwitch}
-            style={styles.switch}
-            value={isAdmin}
-          />
+        <Text style={[styles.errText, {marginBottom: '3%'}]}>{error}</Text>
 
+        <TouchableOpacity style={styles.btn} onPress={handleSubmit}>
+          <Text>Sign up</Text>
+        </TouchableOpacity>
+
+        <View style={styles.switchContainer}>
           <Text
             style={[
               {color: isAdmin ? COLORS.primary : 'grey'},
@@ -248,18 +199,30 @@ export default function Signup({navigation}) {
             ]}>
             Admin
           </Text>
+
+          <Switch
+            trackColor={{false: COLORS.primary, true: '#767577'}}
+            thumbColor={!isAdmin ? '#fff' : '#f4f3f4'}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={toggleSwitch}
+            style={styles.switch}
+            value={!isAdmin}
+          />
+
+          <Text
+            style={[
+              {color: isAdmin ? 'grey' : COLORS.primary},
+              styles.inputText,
+            ]}>
+            Member
+          </Text>
         </View>
-
-        <Text style={[styles.errText, {marginBottom: '3%'}]}>{error}</Text>
-
-        <TouchableOpacity style={styles.btn} onPress={handleSubmit}>
-          <Text>Submit</Text>
-        </TouchableOpacity>
+        <Text
+          onPress={() => navigation.replace('LOGIN')}
+          style={styles.linkText}>
+          Already have an account? click here
+        </Text>
       </View>
-
-      <Text onPress={() => navigation.replace('LOGIN')} style={styles.linkText}>
-        Already have an account? Login here
-      </Text>
     </View>
   );
 }
@@ -306,7 +269,7 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: '#fff',
     borderColor: 'grey',
-    borderWidth: 1,
+    borderBottomWidth: 1,
     padding: '2%',
   },
   inputText: {
@@ -318,6 +281,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '400',
     color: 'red',
+    marginTop: '1%',
   },
   linkText: {
     fontSize: 12,

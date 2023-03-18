@@ -18,46 +18,7 @@ import {
   USER_MEMBER_KEY,
 } from '../../shared/Constants';
 import {COLORS} from '../../shared/Styles';
-
-const handleValidation = (val, type) => {
-  switch (type) {
-    case 'EMAIL':
-      if (!val || !EMAIL_VALIDATION.test(val)) {
-        return {
-          val: val,
-          isValid: false,
-          errMsg: 'Please enter valid email address',
-        };
-      } else {
-        return {
-          val: val,
-          isValid: true,
-          errMsg: '',
-        };
-      }
-    case 'PASSWORD':
-      if (!val || val.length < 6) {
-        return {
-          val: val,
-          isValid: false,
-          errMsg: 'Password must be atleast 6 characters long.',
-        };
-      } else {
-        return {
-          val: val,
-          isValid: true,
-          errMsg: '',
-        };
-      }
-
-    default:
-      return {
-        val: val,
-        isValid: true,
-        errMsg: '',
-      };
-  }
-};
+import {handleValidation} from '../../utils/Validations';
 
 export default function Login({navigation}) {
   const [email, setEmail] = useState({
@@ -83,10 +44,11 @@ export default function Login({navigation}) {
     let info = await AsyncStorage.getItem(USER_LOGGEDIN_KEY);
     info = info ? JSON.parse(info) : null;
 
+    setIsLoading(false);
+
     if (info?.email) {
       navigation.replace('HOME');
     }
-    setIsLoading(false);
   };
 
   const handleSubmit = async () => {
@@ -98,6 +60,7 @@ export default function Login({navigation}) {
       setPassword(passValidation);
       return;
     }
+
     let expectedData = [];
     if (isAdmin) {
       expectedData = await AsyncStorage.getItem(USER_ADMIN_KEY);
@@ -280,6 +243,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '400',
     color: 'red',
+    marginTop: '1%',
   },
   linkText: {
     fontSize: 12,
